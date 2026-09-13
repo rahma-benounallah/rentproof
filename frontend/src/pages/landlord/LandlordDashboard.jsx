@@ -1,4 +1,4 @@
-function LandlordDashboard({ onAddProperty, onViewProperties }) {
+function LandlordDashboard({ onAddProperty, onViewProperties, onViewRequests }) {
   const landlordName = "Ahmed";
   const stats = {
     totalProperties: 3,
@@ -24,6 +24,9 @@ function LandlordDashboard({ onAddProperty, onViewProperties }) {
         </button>
         <button onClick={onViewProperties} style={styles.viewButton}>
           View my properties
+        </button>
+        <button onClick={onViewRequests} style={styles.viewButton}>
+          View requests
         </button>
       </div>
     </div>
@@ -73,6 +76,7 @@ const styles = {
     marginTop: "2rem",
     display: "flex",
     gap: "1rem",
+    flexWrap: "wrap",
   },
   addButton: {
     padding: "0.8rem 1.5rem",
