@@ -4,6 +4,7 @@ import AddProperty from "./pages/landlord/AddProperty";
 import PropertyList from "./pages/landlord/PropertyList";
 import RentalRequests from "./pages/landlord/RentalRequests";
 import CreateAgreement from "./pages/landlord/CreateAgreement";
+import AgreementDashboard from "./pages/landlord/AgreementDashboard";
 
 function App() {
   const [currentPage, setCurrentPage] = useState("dashboard");
@@ -46,11 +47,16 @@ function App() {
     );
   }
 
+  if (currentPage === "agreementDashboard") {
+    return <AgreementDashboard onBack={() => setCurrentPage("dashboard")} />;
+  }
+
   return (
     <LandlordDashboard
       onAddProperty={() => setCurrentPage("addProperty")}
       onViewProperties={() => setCurrentPage("propertyList")}
       onViewRequests={() => setCurrentPage("rentalRequests")}
+      onViewAgreements={() => setCurrentPage("agreementDashboard")}
     />
   );
 }
