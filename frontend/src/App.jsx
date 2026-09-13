@@ -1,8 +1,7 @@
 import { useState } from "react";
-import LandlordDashboard from "./LandlordDashboard";
-import AddProperty from "./AddProperty";
-import PropertyList from "./PropertyList";
-
+import LandlordDashboard from "./pages/landlord/LandlordDashboard";
+import AddProperty from "./pages/landlord/AddProperty";
+import PropertyList from "./pages/landlord/PropertyList";
 function App() {
   const [currentPage, setCurrentPage] = useState("dashboard");
 
