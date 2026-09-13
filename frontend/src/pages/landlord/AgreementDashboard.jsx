@@ -1,29 +1,83 @@
 import { useState } from "react";
 
 function AgreementDashboard({ onBack }) {
-  // Données fictives — structure à confirmer avec Membre 3 (backend) et Membre 4 (Hedera)
+  // Données fictives respectant EXACTEMENT la structure confirmée avec l'équipe
+  // Plus tard : remplacer par fetch("/api/agreements") -> setAgreements(data)
   const [agreements] = useState([
     {
-      id: "001",
-      propertyTitle: "Apartment A27",
-      tenants: ["Sara", "Amira"],
-      status: "ACTIVE",
-      hederaStatus: {
-        nftCreated: true,
-        hcsRecorded: true,
+      id: 25,
+      status: "active",
+      property: { id: 12, title: "Apartment A27", city: "Gabès" },
+      landlord: { id: 5, name: "Ahmed" },
+      tenants: [
+        { id: 21, name: "Sara", rentShare: 400 },
+        { id: 22, name: "Amira", rentShare: 400 },
+      ],
+      rent: { total: 800, currency: "TND" },
+      period: { start: "2026-10-01", end: "2027-09-30" },
+      version: 1,
+      documentHash: "a81f3c9e7b2d...9d72",
+      hedera: {
+        network: "testnet",
+        nft: { created: true, tokenId: "0.0.123456", serialNumber: 1 },
+        hcs: {
+          eventRecorded: true,
+          topicId: "0.0.789012",
+          transactionId: "0.0.123456@1727000000.123456789",
+          consensusTimestamp: "2026-09-20T14:32:10.123Z",
+        },
       },
+      events: [
+        { type: "AGREEMENT_CREATED", timestamp: "2026-09-20T14:30:00.000Z" },
+        { type: "AGREEMENT_ACCEPTED", timestamp: "2026-09-20T14:31:00.000Z" },
+        {
+          type: "RENTAL_RIGHT_CREATED",
+          timestamp: "2026-09-20T14:32:10.123Z",
+        },
+      ],
     },
     {
-      id: "002",
-      propertyTitle: "Studio C3",
-      tenants: ["Yasmine"],
-      status: "PENDING",
-      hederaStatus: {
-        nftCreated: false,
-        hcsRecorded: false,
+      id: 26,
+      status: "pending",
+      property: { id: 15, title: "Studio C3", city: "Gabès" },
+      landlord: { id: 5, name: "Ahmed" },
+      tenants: [{ id: 30, name: "Yasmine", rentShare: 550 }],
+      rent: { total: 550, currency: "TND" },
+      period: { start: "2026-10-15", end: "2027-09-30" },
+      version: 1,
+      documentHash: null,
+      hedera: {
+        network: "testnet",
+        nft: { created: false, tokenId: null, serialNumber: null },
+        hcs: {
+          eventRecorded: false,
+          topicId: null,
+          transactionId: null,
+          consensusTimestamp: null,
+        },
       },
+      events: [
+        { type: "AGREEMENT_CREATED", timestamp: "2026-09-21T09:00:00.000Z" },
+      ],
     },
   ]);
+
+  const formatDate = (isoString) => {
+    if (!isoString) return "—";
+    return new Date(isoString).toLocaleString("fr-FR", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const eventLabels = {
+    AGREEMENT_CREATED: "Agreement created",
+    AGREEMENT_ACCEPTED: "Agreement accepted",
+    RENTAL_RIGHT_CREATED: "Rental right created",
+  };
 
   return (
     <div style={styles.container}>
@@ -42,31 +96,71 @@ function AgreementDashboard({ onBack }) {
                 style={{
                   ...styles.statusBadge,
                   backgroundColor:
-                    agreement.status === "ACTIVE" ? "#e6f7ec" : "#fdf3e3",
-                  color:
-                    agreement.status === "ACTIVE" ? "#1a7f4b" : "#a56b00",
+                    agreement.status === "active" ? "#e6f7ec" : "#fdf3e3",
+                  color: agreement.status === "active" ? "#1a7f4b" : "#a56b00",
                 }}
               >
-                {agreement.status}
+                {agreement.status.toUpperCase()}
               </span>
             </div>
 
             <p style={styles.line}>
-              <strong>Property:</strong> {agreement.propertyTitle}
+              <strong>Property:</strong> {agreement.property.title} (
+              {agreement.property.city})
             </p>
             <p style={styles.line}>
-              <strong>Tenants:</strong> {agreement.tenants.join(", ")}
+              <strong>Tenants:</strong>{" "}
+              {agreement.tenants
+                .map((t) => `${t.name} (${t.rentShare} ${agreement.rent.currency})`)
+                .join(", ")}
+            </p>
+            <p style={styles.line}>
+              <strong>Period:</strong> {agreement.period.start} →{" "}
+              {agreement.period.end}
             </p>
 
             <div style={styles.hederaBox}>
               <p style={styles.hederaLine}>
-                {agreement.hederaStatus.nftCreated ? "✅" : "⏳"} RentalRight
-                NFT created
+                {agreement.hedera.nft.created ? "✅" : "⏳"} Rental Right NFT
+                {agreement.hedera.nft.created && (
+                  <span style={styles.hederaDetail}>
+                    {" "}
+                    — Token {agreement.hedera.nft.tokenId} #
+                    {agreement.hedera.nft.serialNumber}
+                  </span>
+                )}
               </p>
               <p style={styles.hederaLine}>
-                {agreement.hederaStatus.hcsRecorded ? "✅" : "⏳"} HCS event
+                {agreement.hedera.hcs.eventRecorded ? "✅" : "⏳"} HCS event
                 recorded
+                {agreement.hedera.hcs.eventRecorded && (
+                  <span style={styles.hederaDetail}>
+                    {" "}
+                    — Topic {agreement.hedera.hcs.topicId}
+                  </span>
+                )}
               </p>
+              {agreement.hedera.hcs.consensusTimestamp && (
+                <p style={styles.hederaLine}>
+                  🕒 Consensus:{" "}
+                  {formatDate(agreement.hedera.hcs.consensusTimestamp)}
+                </p>
+              )}
+              {agreement.documentHash && (
+                <p style={styles.hederaLine}>
+                  🔐 Hash: {agreement.documentHash}
+                </p>
+              )}
+            </div>
+
+            <div style={styles.eventHistory}>
+              <p style={styles.eventTitle}>Event history</p>
+              {agreement.events.map((event, index) => (
+                <p key={index} style={styles.eventLine}>
+                  ✓ {eventLabels[event.type] || event.type} —{" "}
+                  {formatDate(event.timestamp)}
+                </p>
+              ))}
             </div>
           </div>
         ))}
@@ -124,6 +218,7 @@ const styles = {
   line: {
     margin: "0.3rem 0",
     color: "#333",
+    fontSize: "0.95rem",
   },
   hederaBox: {
     marginTop: "1rem",
@@ -132,7 +227,26 @@ const styles = {
   },
   hederaLine: {
     margin: "0.3rem 0",
+    fontSize: "0.85rem",
+  },
+  hederaDetail: {
+    color: "#666",
+    fontWeight: "normal",
+  },
+  eventHistory: {
+    marginTop: "1rem",
+    paddingTop: "1rem",
+    borderTop: "1px solid #ddd",
+  },
+  eventTitle: {
+    fontWeight: "bold",
     fontSize: "0.9rem",
+    marginBottom: "0.3rem",
+  },
+  eventLine: {
+    margin: "0.2rem 0",
+    fontSize: "0.85rem",
+    color: "#555",
   },
 };
 
