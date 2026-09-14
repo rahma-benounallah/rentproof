@@ -4,6 +4,7 @@ import AddProperty from "./pages/landlord/AddProperty";
 import PropertyList from "./pages/landlord/PropertyList";
 import RentalRequests from "./pages/landlord/RentalRequests";
 import CreateAgreement from "./pages/landlord/CreateAgreement";
+import AgreementDashboard from "./pages/landlord/AgreementDashboard";
 import StudentApp from "./pages/student/StudentApp";
 
 function App() {
@@ -83,30 +84,4 @@ function LandlordApp() {
     );
   }
 
-  if (currentPage === "createAgreement" && selectedRequest) {
-    return (
-      <CreateAgreement
-        request={selectedRequest}
-        onBack={() => setCurrentPage("dashboard")}
-        onGenerate={(agreement) => {
-          alert(
-            `Agreement created for ${agreement.tenants.join(
-              ", "
-            )}! (Hedera integration comes next)`
-          );
-          setCurrentPage("dashboard");
-        }}
-      />
-    );
-  }
-
-  return (
-    <LandlordDashboard
-      onAddProperty={() => setCurrentPage("addProperty")}
-      onViewProperties={() => setCurrentPage("propertyList")}
-      onViewRequests={() => setCurrentPage("rentalRequests")}
-    />
-  );
-}
-
-export default App;
+  if (currentPage === "createAgreement"
