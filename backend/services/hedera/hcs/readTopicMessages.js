@@ -21,13 +21,19 @@ function readTopicMessages() {
 
             response.on("end", () => {
                 if (response.statusCode !== 200) {
-                    reject(new Error(`Mirror Node error: ${response.statusCode}`));
+                    reject(
+                        new Error(`Mirror Node error: ${response.statusCode}`)
+                    );
                     return;
                 }
 
-                resolve(JSON.parse(data));
+                try {
+                    const parsedData = JSON.parse(data);
+                    resolve(parsedData);
+                } catch (error) {
+                    reject(new Error("Mirror Node returned invalid JSON"));
+                }
             });
-
         }).on("error", (error) => {
             reject(error);
         });
