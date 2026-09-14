@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { colors, fonts, buttonStyles, cardStyle } from "../../theme";
+import Navbar from "../../components/Navbar";
 
 function PropertyList({ onBack }) {
-  // Données fictives pour l'instant — seront remplacées par GET /api/properties plus tard
   const [properties, setProperties] = useState([
     { id: 7, title: "Apartment A27", rent: 800, status: "Available" },
     { id: 14, title: "Apartment B14", rent: 900, status: "Rented" },
@@ -11,13 +12,10 @@ function PropertyList({ onBack }) {
   const handleDelete = (id) => {
     const confirmDelete = window.confirm("Delete this property?");
     if (!confirmDelete) return;
-
-    // Plus tard : fetch(`/api/properties/${id}`, { method: "DELETE" })
     setProperties(properties.filter((p) => p.id !== id));
   };
 
   const handleEdit = (id) => {
-    // Plus tard : ouvrir un formulaire pré-rempli avec PUT /api/properties/:id
     alert(`Edit property #${id} (not built yet)`);
   };
 
@@ -26,68 +24,75 @@ function PropertyList({ onBack }) {
   };
 
   return (
-    <div style={styles.container}>
-      <button onClick={onBack} style={styles.backButton}>
-        ← Back to dashboard
-      </button>
+    <>
+      <Navbar userName="Ahmed" role="Landlord" />
+      <div style={styles.container}>
+        <button onClick={onBack} style={styles.backButton}>
+          ← Back to dashboard
+        </button>
 
-      <h1 style={styles.title}>My properties</h1>
+        <h1 style={styles.title}>My properties</h1>
 
-      <div style={styles.list}>
-        {properties.map((property) => (
-          <div key={property.id} style={styles.card}>
-            <div style={styles.cardInfo}>
-              <h3 style={styles.cardTitle}>{property.title}</h3>
-              <p style={styles.cardRent}>{property.rent} DT/month</p>
-              <span
-                style={{
-                  ...styles.statusBadge,
-                  backgroundColor:
-                    property.status === "Available" ? "#e6f7ec" : "#fdeeea",
-                  color:
-                    property.status === "Available" ? "#1a7f4b" : "#c0392b",
-                }}
-              >
-                {property.status}
-              </span>
-            </div>
-
-            <div style={styles.actions}>
-              {property.status === "Rented" ? (
-                <button
-                  onClick={() => handleViewTenants(property.id)}
-                  style={styles.actionButton}
+        <div style={styles.list}>
+          {properties.map((property) => (
+            <div key={property.id} style={{ ...cardStyle, ...styles.card }}>
+              <div style={styles.cardInfo}>
+                <h3 style={styles.cardTitle}>{property.title}</h3>
+                <p style={styles.cardRent}>{property.rent} DT/month</p>
+                <span
+                  style={{
+                    ...styles.statusBadge,
+                    backgroundColor:
+                      property.status === "Available"
+                        ? colors.successLight
+                        : colors.dangerLight,
+                    color:
+                      property.status === "Available"
+                        ? colors.success
+                        : colors.danger,
+                  }}
                 >
-                  View tenants
-                </button>
-              ) : (
-                <>
+                  {property.status}
+                </span>
+              </div>
+
+              <div style={styles.actions}>
+                {property.status === "Rented" ? (
                   <button
-                    onClick={() => handleEdit(property.id)}
-                    style={styles.actionButton}
+                    onClick={() => handleViewTenants(property.id)}
+                    style={buttonStyles.primary}
                   >
-                    Edit
+                    View tenants
                   </button>
-                  <button
-                    onClick={() => handleDelete(property.id)}
-                    style={styles.deleteButton}
-                  >
-                    Delete
-                  </button>
-                </>
-              )}
+                ) : (
+                  <>
+                    <button
+                      onClick={() => handleEdit(property.id)}
+                      style={buttonStyles.primary}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(property.id)}
+                      style={buttonStyles.danger}
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
 const styles = {
   container: {
     padding: "2rem",
-    fontFamily: "sans-serif",
+    fontFamily: fonts.family,
     maxWidth: "600px",
     margin: "0 auto",
   },
@@ -95,13 +100,14 @@ const styles = {
     marginBottom: "1rem",
     background: "none",
     border: "none",
-    color: "#0077cc",
+    color: colors.primary,
     cursor: "pointer",
     fontSize: "1rem",
   },
   title: {
     fontSize: "1.6rem",
     marginBottom: "1.5rem",
+    color: colors.textDark,
   },
   list: {
     display: "flex",
@@ -112,10 +118,6 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
-    borderRadius: "10px",
-    padding: "1rem 1.5rem",
-    boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
   },
   cardInfo: {
     display: "flex",
@@ -125,10 +127,11 @@ const styles = {
   cardTitle: {
     margin: 0,
     fontSize: "1.1rem",
+    color: colors.textDark,
   },
   cardRent: {
     margin: 0,
-    color: "#555",
+    color: colors.textMuted,
   },
   statusBadge: {
     display: "inline-block",
@@ -141,24 +144,6 @@ const styles = {
   actions: {
     display: "flex",
     gap: "0.5rem",
-  },
-  actionButton: {
-    padding: "0.5rem 1rem",
-    backgroundColor: "#0077cc",
-    color: "white",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontSize: "0.9rem",
-  },
-  deleteButton: {
-    padding: "0.5rem 1rem",
-    backgroundColor: "#c0392b",
-    color: "white",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontSize: "0.9rem",
   },
 };
 

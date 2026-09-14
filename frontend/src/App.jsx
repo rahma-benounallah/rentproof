@@ -84,4 +84,35 @@ function LandlordApp() {
     );
   }
 
-  if (currentPage === "createAgreement"
+  if (currentPage === "createAgreement" && selectedRequest) {
+    return (
+      <CreateAgreement
+        request={selectedRequest}
+        onBack={() => setCurrentPage("dashboard")}
+        onGenerate={(agreement) => {
+          alert(
+            `Agreement created for ${agreement.tenants.join(
+              ", "
+            )}! (Hedera integration comes next)`
+          );
+          setCurrentPage("dashboard");
+        }}
+      />
+    );
+  }
+
+  if (currentPage === "agreementDashboard") {
+    return <AgreementDashboard onBack={() => setCurrentPage("dashboard")} />;
+  }
+
+  return (
+    <LandlordDashboard
+      onAddProperty={() => setCurrentPage("addProperty")}
+      onViewProperties={() => setCurrentPage("propertyList")}
+      onViewRequests={() => setCurrentPage("rentalRequests")}
+      onViewAgreements={() => setCurrentPage("agreementDashboard")}
+    />
+  );
+}
+
+export default App;

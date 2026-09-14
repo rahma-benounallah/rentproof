@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { colors, fonts, cardStyle } from "../../theme";
+import Navbar from "../../components/Navbar";
 
 function AgreementDashboard({ onBack }) {
-  // Données fictives respectant EXACTEMENT la structure confirmée avec l'équipe
-  // Plus tard : remplacer par fetch("/api/agreements") -> setAgreements(data)
   const [agreements] = useState([
     {
       id: 25,
@@ -80,99 +80,110 @@ function AgreementDashboard({ onBack }) {
   };
 
   return (
-    <div style={styles.container}>
-      <button onClick={onBack} style={styles.backButton}>
-        ← Back to dashboard
-      </button>
+    <>
+      <Navbar userName="Ahmed" role="Landlord" />
+      <div style={styles.container}>
+        <button onClick={onBack} style={styles.backButton}>
+          ← Back to dashboard
+        </button>
 
-      <h1 style={styles.title}>My rental agreements</h1>
+        <h1 style={styles.title}>My rental agreements</h1>
 
-      <div style={styles.list}>
-        {agreements.map((agreement) => (
-          <div key={agreement.id} style={styles.card}>
-            <div style={styles.cardHeader}>
-              <h3 style={styles.cardTitle}>Agreement #{agreement.id}</h3>
-              <span
-                style={{
-                  ...styles.statusBadge,
-                  backgroundColor:
-                    agreement.status === "active" ? "#e6f7ec" : "#fdf3e3",
-                  color: agreement.status === "active" ? "#1a7f4b" : "#a56b00",
-                }}
-              >
-                {agreement.status.toUpperCase()}
-              </span>
-            </div>
+        <div style={styles.list}>
+          {agreements.map((agreement) => (
+            <div key={agreement.id} style={cardStyle}>
+              <div style={styles.cardHeader}>
+                <h3 style={styles.cardTitle}>Agreement #{agreement.id}</h3>
+                <span
+                  style={{
+                    ...styles.statusBadge,
+                    backgroundColor:
+                      agreement.status === "active"
+                        ? colors.successLight
+                        : colors.warningLight,
+                    color:
+                      agreement.status === "active"
+                        ? colors.success
+                        : colors.warning,
+                  }}
+                >
+                  {agreement.status.toUpperCase()}
+                </span>
+              </div>
 
-            <p style={styles.line}>
-              <strong>Property:</strong> {agreement.property.title} (
-              {agreement.property.city})
-            </p>
-            <p style={styles.line}>
-              <strong>Tenants:</strong>{" "}
-              {agreement.tenants
-                .map((t) => `${t.name} (${t.rentShare} ${agreement.rent.currency})`)
-                .join(", ")}
-            </p>
-            <p style={styles.line}>
-              <strong>Period:</strong> {agreement.period.start} →{" "}
-              {agreement.period.end}
-            </p>
-
-            <div style={styles.hederaBox}>
-              <p style={styles.hederaLine}>
-                {agreement.hedera.nft.created ? "✅" : "⏳"} Rental Right NFT
-                {agreement.hedera.nft.created && (
-                  <span style={styles.hederaDetail}>
-                    {" "}
-                    — Token {agreement.hedera.nft.tokenId} #
-                    {agreement.hedera.nft.serialNumber}
-                  </span>
-                )}
+              <p style={styles.line}>
+                <strong>Property:</strong> {agreement.property.title} (
+                {agreement.property.city})
               </p>
-              <p style={styles.hederaLine}>
-                {agreement.hedera.hcs.eventRecorded ? "✅" : "⏳"} HCS event
-                recorded
-                {agreement.hedera.hcs.eventRecorded && (
-                  <span style={styles.hederaDetail}>
-                    {" "}
-                    — Topic {agreement.hedera.hcs.topicId}
-                  </span>
-                )}
+              <p style={styles.line}>
+                <strong>Tenants:</strong>{" "}
+                {agreement.tenants
+                  .map(
+                    (t) => `${t.name} (${t.rentShare} ${agreement.rent.currency})`
+                  )
+                  .join(", ")}
               </p>
-              {agreement.hedera.hcs.consensusTimestamp && (
-                <p style={styles.hederaLine}>
-                  🕒 Consensus:{" "}
-                  {formatDate(agreement.hedera.hcs.consensusTimestamp)}
-                </p>
-              )}
-              {agreement.documentHash && (
-                <p style={styles.hederaLine}>
-                  🔐 Hash: {agreement.documentHash}
-                </p>
-              )}
-            </div>
+              <p style={styles.line}>
+                <strong>Period:</strong> {agreement.period.start} →{" "}
+                {agreement.period.end}
+              </p>
 
-            <div style={styles.eventHistory}>
-              <p style={styles.eventTitle}>Event history</p>
-              {agreement.events.map((event, index) => (
-                <p key={index} style={styles.eventLine}>
-                  ✓ {eventLabels[event.type] || event.type} —{" "}
-                  {formatDate(event.timestamp)}
+              <div style={styles.hederaBox}>
+                <p style={styles.hederaLine}>
+                  {agreement.hedera.nft.created ? "✅" : "⏳"} Rental Right
+                  NFT
+                  {agreement.hedera.nft.created && (
+                    <span style={styles.hederaDetail}>
+                      {" "}
+                      — Token {agreement.hedera.nft.tokenId} #
+                      {agreement.hedera.nft.serialNumber}
+                    </span>
+                  )}
                 </p>
-              ))}
+                <p style={styles.hederaLine}>
+                  {agreement.hedera.hcs.eventRecorded ? "✅" : "⏳"} HCS event
+                  recorded
+                  {agreement.hedera.hcs.eventRecorded && (
+                    <span style={styles.hederaDetail}>
+                      {" "}
+                      — Topic {agreement.hedera.hcs.topicId}
+                    </span>
+                  )}
+                </p>
+                {agreement.hedera.hcs.consensusTimestamp && (
+                  <p style={styles.hederaLine}>
+                    🕒 Consensus:{" "}
+                    {formatDate(agreement.hedera.hcs.consensusTimestamp)}
+                  </p>
+                )}
+                {agreement.documentHash && (
+                  <p style={styles.hederaLine}>
+                    🔐 Hash: {agreement.documentHash}
+                  </p>
+                )}
+              </div>
+
+              <div style={styles.eventHistory}>
+                <p style={styles.eventTitle}>Event history</p>
+                {agreement.events.map((event, index) => (
+                  <p key={index} style={styles.eventLine}>
+                    ✓ {eventLabels[event.type] || event.type} —{" "}
+                    {formatDate(event.timestamp)}
+                  </p>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
 const styles = {
   container: {
     padding: "2rem",
-    fontFamily: "sans-serif",
+    fontFamily: fonts.family,
     maxWidth: "600px",
     margin: "0 auto",
   },
@@ -180,24 +191,19 @@ const styles = {
     marginBottom: "1rem",
     background: "none",
     border: "none",
-    color: "#0077cc",
+    color: colors.primary,
     cursor: "pointer",
     fontSize: "1rem",
   },
   title: {
     fontSize: "1.6rem",
     marginBottom: "1.5rem",
+    color: colors.textDark,
   },
   list: {
     display: "flex",
     flexDirection: "column",
     gap: "1rem",
-  },
-  card: {
-    backgroundColor: "#f5f5f5",
-    borderRadius: "10px",
-    padding: "1.5rem",
-    boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
   },
   cardHeader: {
     display: "flex",
@@ -208,6 +214,7 @@ const styles = {
   cardTitle: {
     margin: 0,
     fontSize: "1.1rem",
+    color: colors.textDark,
   },
   statusBadge: {
     padding: "0.2rem 0.6rem",
@@ -217,36 +224,37 @@ const styles = {
   },
   line: {
     margin: "0.3rem 0",
-    color: "#333",
+    color: colors.textDark,
     fontSize: "0.95rem",
   },
   hederaBox: {
     marginTop: "1rem",
     paddingTop: "1rem",
-    borderTop: "1px solid #ddd",
+    borderTop: `1px solid ${colors.border}`,
   },
   hederaLine: {
     margin: "0.3rem 0",
     fontSize: "0.85rem",
   },
   hederaDetail: {
-    color: "#666",
+    color: colors.textMuted,
     fontWeight: "normal",
   },
   eventHistory: {
     marginTop: "1rem",
     paddingTop: "1rem",
-    borderTop: "1px solid #ddd",
+    borderTop: `1px solid ${colors.border}`,
   },
   eventTitle: {
     fontWeight: "bold",
     fontSize: "0.9rem",
     marginBottom: "0.3rem",
+    color: colors.textDark,
   },
   eventLine: {
     margin: "0.2rem 0",
     fontSize: "0.85rem",
-    color: "#555",
+    color: colors.textMuted,
   },
 };
 
